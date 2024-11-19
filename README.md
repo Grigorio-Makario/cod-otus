@@ -11,13 +11,16 @@
 
 ### Таблица адресов
 
-|Device|Interface|IP Address|Subnet Mask|
+
+
+
+|Device|Interface|IP Address|Subnet Mask|Default Gateway
 |---|---|---|---|---|
-spine-1|loopback0|10.60.0.1|255.255.255.255|
-spine-2|loopback0|10.60.0.2|255.255.255.255|
-leaf-1 |loopback0|10.60.1.1|255.255.255.255|
-leaf-2 |loopback0|10.60.1.2|255.255.255.255|
-leaf-3 |loopback0|10.60.1.3|255.255.255.255|
+spine-1|loopback0|10.60.0.1|255.255.255.255|N/A
+
+
+
+
 
 
 P-t-P links
