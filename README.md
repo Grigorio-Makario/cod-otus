@@ -14,9 +14,13 @@
 
 
 
-|Device|Interface|IP Address|Subnet Mask|Default Gateway
+|Device|Interface|IP Address|Subnet Mask|Description
 |---|---|---|---|---|
 spine-1|loopback0|10.60.0.1|255.255.255.255|N/A
+spine-2|loopback0|10.60.0.2|255.255.255.255|N/A
+leaf-1|loopback0|10.60.1.1|255.255.255.255|N/A
+leaf-2|loopback0|10.60.1.2|255.255.255.255|N/A
+leaf-3|loopback0|10.60.1.3|255.255.255.255|N/A
 
 
 
