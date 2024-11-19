@@ -22,12 +22,20 @@ leaf-1|loopback0|10.60.1.1|255.255.255.255|N/A
 leaf-2|loopback0|10.60.1.2|255.255.255.255|N/A
 leaf-3|loopback0|10.60.1.3|255.255.255.255|N/A
 
+### P-t-P links
+
+
+|Device|Interface|IP Address|Subnet Mask|IP Address|Interface|Device
+|---|---|---|---|---|---|---|
+leaf-1|eth1|10.60.2.1|10.60.0/30|10.60.2.1|eth1|spine-1
 
 
 
 
 
-P-t-P links
+
+
+
 10.60.2.0/30 leaf-1 - spine-1
 10.60.2.4/30 leaf-1 - spine-2
 10.60.2.8/30 leaf-2 - spine-1
