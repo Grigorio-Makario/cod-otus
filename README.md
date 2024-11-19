@@ -27,23 +27,15 @@ leaf-3|loopback0|10.60.1.3|255.255.255.255|N/A
 
 |Device|Interface|IP Address|Subnet Mask|IP Address|Interface|Device
 |---|---|---|---|---|---|---|
-leaf-1|eth1|10.60.2.1|10.60.0/30|10.60.2.1|eth1|spine-1
+leaf-1|eth1|10.60.2.1|10.60.0/30|10.60.2.2|eth1|spine-1
+leaf-1|eth2|10.60.2.5|10.60.4/30|10.60.2.6|eth1|spine-2
+leaf-2|eth1|10.60.2.9|10.60.8/30|10.60.2.10|eth2|spine-1
+leaf-2|eth2|10.60.2.13|10.60.12/30|10.60.2.14|eth2|spine-2
+leaf-3|eth1|10.60.2.17|10.60.16/30|10.60.2.18|eth3|spine-1
+leaf-3|eth2|10.60.2.21|10.60.20/30|10.60.2.22|eth3|spine-2
 
+#### Clients Network
 
-
-
-
-
-
-
-10.60.2.0/30 leaf-1 - spine-1
-10.60.2.4/30 leaf-1 - spine-2
-10.60.2.8/30 leaf-2 - spine-1
-10.60.2.12/30 leaf-2 - spine-2
-10.60.2.16/30 leaf-3 - spine-1
-10.60.2.20/30 leaf-3 - spine-2
-
-Clients Network
 10.70.0.0/22
 
 #### Настройка Leaf-1
