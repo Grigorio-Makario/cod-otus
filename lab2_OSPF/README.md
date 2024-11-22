@@ -1,265 +1,192 @@
-### Проектирование адресного пространства
+### Underlay. OSPF
 
 ### Цели
-- Собрать схему CLOS;
-- Распределить адресное пространство;
+- Настроите OSPF в Underlay сети, для IP связанности между всеми сетевыми устройствами;
+- Зафиксируете в документации - план работы, адресное пространство, схему сети, конфигурацию устройств;
+- Убедитесь в наличии IP связанности между устройствами в OSFP домене;
 
 
-### Подготовка стенда
+### Общая топология
 
 ![img_2.png](lab_2_clos.png)
 
-### Таблица адресов
 
-
-
-
-|Device|Interface|IP Address|Subnet Mask|Description
-|---|---|---|---|---|
-spine-1|loopback0|10.60.0.1|255.255.255.255|N/A
-spine-2|loopback0|10.60.0.2|255.255.255.255|N/A
-leaf-1|loopback0|10.60.1.1|255.255.255.255|N/A
-leaf-2|loopback0|10.60.1.2|255.255.255.255|N/A
-leaf-3|loopback0|10.60.1.3|255.255.255.255|N/A
-
-### P-t-P links
-
-
-|Device|Interface|IP Address|Subnet Mask|IP Address|Interface|Device
-|---|---|---|---|---|---|---|
-leaf-1|eth1|10.60.2.1|10.60.0/30|10.60.2.2|eth1|spine-1
-leaf-1|eth2|10.60.2.5|10.60.4/30|10.60.2.6|eth1|spine-2
-leaf-2|eth1|10.60.2.9|10.60.8/30|10.60.2.10|eth2|spine-1
-leaf-2|eth2|10.60.2.13|10.60.12/30|10.60.2.14|eth2|spine-2
-leaf-3|eth1|10.60.2.17|10.60.16/30|10.60.2.18|eth3|spine-1
-leaf-3|eth2|10.60.2.21|10.60.20/30|10.60.2.22|eth3|spine-2
-
-#### Clients Network
-
-10.70.0.0/22
-
-#### Настройка Leaf-1
-
-```
-en
-zerotouch disable
-conf t
-hostname leaf-1
-int eth1
-no switchport
-description #To-Spine-1
-ip address 10.60.2.1 255.255.255.252
-exit
-int eth2
-no switchport
-description #To-Spine-2
-ip address 10.60.2.5 255.255.255.252
-exit
-int loopback 0
-ip address 10.60.1.1 255.255.255.255
-end
-leaf-1#sh int status
-Port       Name        Status       Vlan     Duplex Speed  Type            Flags Encapsulation
-Et1        #To-Spine-1 connected    routed   full   1G     EbraTestPhyPort
-Et2        #To-Spine-2 connected    routed   full   1G     EbraTestPhyPort
-Et3                    connected    1        full   1G     EbraTestPhyPort
-Et4                    connected    1        full   1G     EbraTestPhyPort
-Et5                    connected    1        full   1G     EbraTestPhyPort
-Et6                    connected    1        full   1G     EbraTestPhyPort
-Et7                    connected    1        full   1G     EbraTestPhyPort
-Et8                    connected    1        full   1G     EbraTestPhyPort
-Ma1                    connected    routed   a-full a-1G   10/100/1000
-
-leaf-1#
-leaf-1#sh ip int br
-                                                                        Address
-Interface        IP Address        Status      Protocol          MTU    Owner
----------------- ----------------- ----------- ------------- ---------- -------
-Ethernet1        10.60.2.1/30      up          up               1500
-Ethernet2        10.60.2.5/30      up          up               1500
-Loopback0        10.60.1.1/32      up          up              65535
-Management1      unassigned        up          up               1500
-wr
-```
-
-#### Настройка Leaf-2
-
-```
-en
-zerotouch disable
-conf t
-hostname leaf-2
-int eth1
-no switchport
-description #To-Spine-1
-ip address 10.60.2.9 255.255.255.252
-exit
-int eth2
-no switchport
-description #To-Spine-2
-ip address 10.60.2.13 255.255.255.252
-exit
-int loopback 0
-ip address 10.60.1.2 255.255.255.255
-end
-leaf-2#sh int status
-Port       Name        Status       Vlan     Duplex Speed  Type            Flags Encapsulation
-Et1        #To-Spine-1 connected    routed   full   1G     EbraTestPhyPort
-Et2        #To-Spine-2 connected    routed   full   1G     EbraTestPhyPort
-Et3                    connected    1        full   1G     EbraTestPhyPort
-Et4                    connected    1        full   1G     EbraTestPhyPort
-Et5                    connected    1        full   1G     EbraTestPhyPort
-Et6                    connected    1        full   1G     EbraTestPhyPort
-Et7                    connected    1        full   1G     EbraTestPhyPort
-Et8                    connected    1        full   1G     EbraTestPhyPort
-Ma1                    connected    routed   a-full a-1G   10/100/1000
-
-leaf-2#
-leaf-2#sh ip int br
-                                                                        Address
-Interface       IP Address         Status      Protocol          MTU    Owner
---------------- ------------------ ----------- ------------- ---------- -------
-Ethernet1       10.60.2.9/30       up          up               1500
-Ethernet2       10.60.2.13/30      up          up               1500
-Loopback0       10.60.1.2/32       up          up              65535
-Management1     unassigned         up          up               1500
-wr
-```
-
-#### Настройка Leaf-3
-
-```
-en
-zerotouch disable
-conf t
-hostname leaf-3
-int eth1
-no switchport
-description #To-Spine-1
-ip address 10.60.2.17 255.255.255.252
-exit
-int eth2
-no switchport
-description #To-Spine-2
-ip address 10.60.2.21 255.255.255.252
-exit
-int loopback 0
-ip address 10.60.1.3 255.255.255.255
-end
-leaf-3#sh int status
-Port       Name        Status       Vlan     Duplex Speed  Type            Flags Encapsulation
-Et1        #To-Spine-1 connected    routed   full   1G     EbraTestPhyPort
-Et2        #To-Spine-2 connected    routed   full   1G     EbraTestPhyPort
-Et3                    connected    1        full   1G     EbraTestPhyPort
-Et4                    connected    1        full   1G     EbraTestPhyPort
-Et5                    connected    1        full   1G     EbraTestPhyPort
-Et6                    connected    1        full   1G     EbraTestPhyPort
-Et7                    connected    1        full   1G     EbraTestPhyPort
-Et8                    connected    1        full   1G     EbraTestPhyPort
-Ma1                    connected    routed   a-full a-1G   10/100/1000
-
-leaf-3#
-leaf-3#sh ip int br
-                                                                        Address
-Interface       IP Address         Status      Protocol          MTU    Owner
---------------- ------------------ ----------- ------------- ---------- -------
-Ethernet1       10.60.2.17/30      up          up               1500
-Ethernet2       10.60.2.21/30      up          up               1500
-Loopback0       10.60.1.3/32       up          up              65535
-Management1     unassigned         up          up               1500
-wr
-```
 
 #### Настройка Spine-1
 
 ```
-en
-zerotouch disable
-conf t
-hostname spine-1
-int eth1
-no switchport
-description #To-Leaf-1
-ip address 10.60.2.2 255.255.255.252
-exit
-int eth2
-no switchport
-description #To-Leaf-2
-ip address 10.60.2.10 255.255.255.252
-exit
-int eth3
-no switchport
-description #To-Leaf-3
-ip address 10.60.2.18 255.255.255.252
-exit
-int loopback 0
-ip address 10.60.0.1 255.255.255.255
-end
-spine-1#sh int status
-Port       Name       Status       Vlan     Duplex Speed  Type            Flags Encapsulation
-Et1        #To-Leaf-1 connected    routed   full   1G     EbraTestPhyPort
-Et2        #To-Leaf-2 connected    routed   full   1G     EbraTestPhyPort
-Et3        #To-Leaf-3 connected    routed   full   1G     EbraTestPhyPort
-spine-1#sh ip int br
-                                                                        Address
-Interface       IP Address         Status      Protocol          MTU    Owner
---------------- ------------------ ----------- ------------- ---------- -------
-Ethernet1       10.60.2.2/30       up          up               1500
-Ethernet2       10.60.2.10/30      up          up               1500
-Ethernet3       10.60.2.18/30      up          up               1500
-Loopback0       10.60.0.1/32       up          up              65535
-Management1     unassigned         up          up               1500
+spine-1(config)#ip routing
+spine-1(config)#router ospf 10
+spine-1(config-router-ospf)#router-id 10.60.0.1
+spine-1(config-router-ospf)#log-adjacency-changes
+spine-1(config-router-ospf)#passive-interface default
+spine-1(config-router-ospf)#no passive-interface Eth1
+spine-1(config-router-ospf)#no passive-interface Eth2
+spine-1(config-router-ospf)#no passive-interface Eth3
+spine-1(config-router-ospf)#network 10.60.0.1 0.0.0.0 area 0
+spine-1(config-router-ospf)#network 10.60.2.0 0.0.0.3 area 0
+spine-1(config-router-ospf)#network 10.60.2.8 0.0.0.3 area 0
+spine-1(config-router-ospf)#network 10.60.2.16 0.0.0.3 area 0
+spine-1(config)#interface Eth1
+spine-1(config-if-Et1)#ip ospf network point-to-point
+spine-1(config-if-Et1)#bfd interval 100 min_rx 100 multiplier 3
+spine-1(config-if-Et1)#no bfd echo
+spine-1(config)#interface Eth2
+spine-1(config-if-Et2)#ip ospf network point-to-point
+spine-1(config-if-Et2)#bfd interval 100 min_rx 100 multiplier 3
+spine-1(config-if-Et2)#no bfd echo
+spine-1(config)#interface Eth3
+spine-1(config-if-Et3)#ip ospf network point-to-point
+spine-1(config-if-Et3)#bfd interval 100 min_rx 100 multiplier 3
+spine-1(config-if-Et3)#no bfd echo
 
+spine-1#sh running-config | sec ospf
+router ospf 10
+   passive-interface default
+   no passive-interface Ethernet1
+   no passive-interface Ethernet2
+   no passive-interface Ethernet3
+   network 10.60.0.1/32 area 0.0.0.0
+   network 10.60.2.0/30 area 0.0.0.0
+   network 10.60.2.8/30 area 0.0.0.0
+   network 10.60.2.16/30 area 0.0.0.0
+   max-lsa 12000
 ```
 
 #### Настройка Spine-2
 
 ```
-en
-zerotouch disable
-conf t
-hostname spine-2
-int eth1
-no switchport
-description #To-Leaf-1
-ip address 10.60.2.6 255.255.255.252
-exit
-int eth2
-no switchport
-description #To-Leaf-2
-ip address 10.60.2.14 255.255.255.252
-exit
-int eth3
-no switchport
-description #To-Leaf-3
-ip address 10.60.2.22 255.255.255.252
-exit
-int loopback 0
-ip address 10.60.0.2 255.255.255.255
-end
-spine-2#sh int status
-Port       Name       Status       Vlan     Duplex Speed  Type            Flags Encapsulation
-Et1        #To-Leaf-1 connected    routed   full   1G     EbraTestPhyPort
-Et2        #To-Leaf-2 connected    routed   full   1G     EbraTestPhyPort
-Et3        #To-Leaf-3 connected    routed   full   1G     EbraTestPhyPort
-Et4                   connected    1        full   1G     EbraTestPhyPort
-Et5                   connected    1        full   1G     EbraTestPhyPort
-Et6                   connected    1        full   1G     EbraTestPhyPort
-Et7                   connected    1        full   1G     EbraTestPhyPort
-Et8                   connected    1        full   1G     EbraTestPhyPort
-Ma1                   connected    routed   a-full a-1G   10/100/1000
+spine-2(config)#
+ip routing
+interface Eth1
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+interface Eth2
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+interface Eth3
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+router ospf 10
+router-id 10.60.0.2
+log-adjacency-changes
+passive-interface default
+no passive-interface Eth1
+no passive-interface Eth2
+no passive-interface Eth3
+network 10.60.0.2 0.0.0.0 area 0
+network 10.60.2.4 0.0.0.3 area 0
+network 10.60.2.12 0.0.0.3 area 0
+network 10.60.2.20 0.0.0.3 area 0
+```
+
+#### Настройка Leaf-1
+
+```
+leaf-1(config)#
+ip routing
+
+interface Eth1
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+interface Eth2
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+router ospf 10
+router-id 10.60.1.1
+log-adjacency-changes
+passive-interface default
+no passive-interface Eth1
+no passive-interface Eth2
+network 10.60.1.1 0.0.0.0 area 0
+network 10.60.2.0 0.0.0.3 area 0
+network 10.60.2.4 0.0.0.3 area 0
+
+```
+
+#### Настройка Leaf-2
+
+```
+leaf-2(config)#
+ip routing
+
+interface Eth1
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+interface Eth2
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+router ospf 10
+router-id 10.60.1.2
+log-adjacency-changes
+passive-interface default
+no passive-interface Eth1
+no passive-interface Eth2
+network 10.60.1.2 0.0.0.0 area 0
+network 10.60.2.8 0.0.0.3 area 0
+network 10.60.2.12 0.0.0.3 area 0
+
+```
+
+#### Настройка Leaf-3
+
+```
+leaf-3(config)#
+
+ip routing
+interface Eth1
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+interface Eth2
+ip ospf network point-to-point
+bfd interval 100 min_rx 100 multiplier 3
+no bfd echo
+
+router ospf 10
+router-id 10.60.1.3
+log-adjacency-changes
+passive-interface default
+no passive-interface Eth1
+no passive-interface Eth2
+network 10.60.1.3 0.0.0.0 area 0
+network 10.60.2.16 0.0.0.3 area 0
+network 10.60.2.20 0.0.0.3 area 0
+
+```
+
+
+#### Проверка установленного соседства
+
+```
+spine-1#
+sh ip ospf neighbor
+Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
+10.60.1.1       10       default  1   FULL                   00:00:35    10.60.2.1       Ethernet1
+10.60.1.2       10       default  1   FULL                   00:00:36    10.60.2.9       Ethernet2
+10.60.1.3       10       default  0   FULL                   00:00:36    10.60.2.17      Ethernet3
 
 spine-2#
-spine-2#sh ip int br
-                                                                        Address
-Interface       IP Address         Status      Protocol          MTU    Owner
---------------- ------------------ ----------- ------------- ---------- -------
-Ethernet1       10.60.2.6/30       up          up               1500
-Ethernet2       10.60.2.14/30      up          up               1500
-Ethernet3       10.60.2.22/30      up          up               1500
-Loopback0       10.60.0.2/32       up          up              65535
-Management1     unassigned         up          up               1500
-wr
+sh ip ospf neighbor
+Neighbor ID     Instance VRF      Pri State                  Dead Time   Address         Interface
+10.60.1.1       10       default  0   FULL                   00:00:35    10.60.2.5       Ethernet1
+10.60.1.2       10       default  0   FULL                   00:00:35    10.60.2.13      Ethernet2
+10.60.1.3       10       default  0   FULL                   00:00:37    10.60.2.21      Ethernet3
 
 ```
 
