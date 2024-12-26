@@ -445,34 +445,82 @@ nve1      10.60.1.2                               Up    CP        00:39:11 5002.
 #### Имитация отказа линка
 
 ```
-L-3# sh interface trunk
+PC_10.70.0.1> ping 10.70.1.3 -t
+PC_10.70.1.1> ping 10.70.0.3 -t
 
---------------------------------------------------------------------------------
-Port          Native  Status        Port
-              Vlan                  Channel
---------------------------------------------------------------------------------
-Eth1/3        1       trnk-bndl     Po1
-Eth1/4        1       trnk-bndl     Po2
-Eth1/5        1       trnk-bndl     Po100
-Eth1/6        1       trnk-bndl     Po100
+L-2(config)# int po1
+L-2(config-if)# sh
+L-2(config-if)# int po2
+L-2(config-if)# sh
+L-2(config-if)# sh vpc br
+Legend:
+                (*) - local vPC is down, forwarding via vPC peer-link
+
+vPC domain id                     : 10
+Peer status                       : peer adjacency formed ok
+vPC keep-alive status             : peer is alive
+Configuration consistency status  : success
+Per-vlan consistency status       : success
+Type-2 consistency status         : success
+vPC role                          : primary
+Number of vPCs configured         : 2
+Peer Gateway                      : Enabled
+Dual-active excluded VLANs        : -
+Graceful Consistency Check        : Enabled
+Auto-recovery status              : Enabled, timer is off.(timeout = 60s)
+Delay-restore status              : Timer is off.(timeout = 30s)
+Delay-restore SVI status          : Timer is off.(timeout = 60s)
+Delay-restore Orphan-port status  : Timer is off.(timeout = 60s)
+Operational Layer3 Peer-router    : Enabled
+Virtual-peerlink mode             : Disabled
+
+vPC Peer-link status
+---------------------------------------------------------------------
+id    Port   Status Active vlans
+--    ----   ------ -------------------------------------------------
+1     Po100  up     1,10,20,100
 
 
-L-3(config)# int ethernet 1/4
-L-3(config-if)# shutdown
-
-L-3# sh vpc brief
 vPC status
 ----------------------------------------------------------------------------
 Id    Port          Status Consistency Reason                Active vlans
 --    ------------  ------ ----------- ------                ---------------
-1     Po1           up     success     success               1,10,20,100
+1     Po1           down*  success     success               -
 
 
 
 2     Po2           down*  success     success               -
 
----
-L-2# sh vpc brief
+
+L-3# sh vpc brief
+Legend:
+                (*) - local vPC is down, forwarding via vPC peer-link
+
+vPC domain id                     : 10
+Peer status                       : peer adjacency formed ok
+vPC keep-alive status             : peer is alive
+Configuration consistency status  : success
+Per-vlan consistency status       : success
+Type-2 consistency status         : success
+vPC role                          : secondary
+Number of vPCs configured         : 2
+Peer Gateway                      : Enabled
+Dual-active excluded VLANs        : -
+Graceful Consistency Check        : Enabled
+Auto-recovery status              : Enabled, timer is off.(timeout = 60s)
+Delay-restore status              : Timer is off.(timeout = 30s)
+Delay-restore SVI status          : Timer is off.(timeout = 60s)
+Delay-restore Orphan-port status  : Timer is off.(timeout = 60s)
+Operational Layer3 Peer-router    : Enabled
+Virtual-peerlink mode             : Disabled
+
+vPC Peer-link status
+---------------------------------------------------------------------
+id    Port   Status Active vlans
+--    ----   ------ -------------------------------------------------
+1     Po100  up     1,10,20,100
+
+
 vPC status
 ----------------------------------------------------------------------------
 Id    Port          Status Consistency Reason                Active vlans
@@ -484,10 +532,6 @@ Id    Port          Status Consistency Reason                Active vlans
 2     Po2           up     success     success               1,10,20,100
 
 
-
-
-
-
-
 ```
+![img_8.png](lab_8_clos.png)
 
