@@ -512,6 +512,48 @@ Route Distinguisher: 172.16.0.1:4    (L3VNI 100)
 *>i[2]:[0]:[0]:[48]:[0050.7966.681e]:[32]:[192.168.100.4]/272
                       172.16.0.2                        100          0 i
 
-L-6
+L-6# sh ip route vrf GREEN
+IP Route Table for VRF "GREEN"
+'*' denotes best ucast next-hop
+'**' denotes best mcast next-hop
+'[x/y]' denotes [preference/metric]
+'%<string>' in via output denotes VRF <string>
+
+192.168.100.0/24, ubest/mbest: 1/0, attached
+    *via 192.168.100.254, Vlan30, [0/0], 01:25:28, direct
+192.168.100.1/32, ubest/mbest: 1/0
+    *via 202.0.0.1%default, [200/2000], 00:32:55, bgp-65100, internal, tag 65030
+, segid: 100 tunnelid: 0xca000001 encap: VXLAN
+
+192.168.100.2/32, ubest/mbest: 1/0, attached
+    *via 192.168.100.2, Vlan30, [190/0], 00:25:28, hmm
+192.168.100.3/32, ubest/mbest: 1/0
+    *via 202.0.0.1%default, [200/2000], 00:32:55, bgp-65100, internal, tag 65030
+, segid: 100 tunnelid: 0xca000001 encap: VXLAN
+
+192.168.100.4/32, ubest/mbest: 1/0
+    *via 172.16.0.2%default, [200/0], 00:24:37, bgp-65100, internal, tag 65100,
+segid: 100 tunnelid: 0xac100002 encap: VXLAN
+
+192.168.100.254/32, ubest/mbest: 1/0, attached
+    *via 192.168.100.254, Vlan30, [0/0], 01:25:28, local
+192.168.200.0/24, ubest/mbest: 1/0, attached
+    *via 192.168.200.254, Vlan40, [0/0], 01:25:28, direct
+192.168.200.1/32, ubest/mbest: 1/0
+    *via 202.0.0.1%default, [200/2000], 00:28:05, bgp-65100, internal, tag 65030
+, segid: 100 tunnelid: 0xca000001 encap: VXLAN
+
+192.168.200.2/32, ubest/mbest: 1/0
+    *via 172.16.0.2%default, [200/0], 00:35:32, bgp-65100, internal, tag 65100,
+segid: 100 tunnelid: 0xac100002 encap: VXLAN
+
+192.168.200.3/32, ubest/mbest: 1/0
+    *via 202.0.0.1%default, [200/2000], 00:32:55, bgp-65100, internal, tag 65030
+, segid: 100 tunnelid: 0xca000001 encap: VXLAN
+
+192.168.200.4/32, ubest/mbest: 1/0, attached
+    *via 192.168.200.4, Vlan40, [190/0], 00:25:05, hmm
+192.168.200.254/32, ubest/mbest: 1/0, attached
+    *via 192.168.200.254, Vlan40, [0/0], 01:25:28, local
 ```
 
